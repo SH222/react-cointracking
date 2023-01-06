@@ -1,8 +1,9 @@
-import React from "react";
-import { createGlobalStyle } from "styled-components";
-import styled from "styled-components";
-import Router from "./Router";
+import React, { useState } from "react";
+import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { ReactQueryDevtools } from "react-query/devtools";
+import Router from "./Router";
+import styled from "styled-components";
+import { darkTheme, lightTheme } from "./routes/theme";
 
 const GlobalStyled = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400&display=swap');
@@ -63,12 +64,33 @@ const GlobalStyled = createGlobalStyle`
   }
 `;
 
+const ModeBtn = styled.button`
+  width: 30px;
+  height: 30px;
+  background-image: url("./imgs/light.png");
+  background-size: cover;
+  border: none;
+  background-color: transparent;
+  position: fixed;
+  z-index: 1;
+  right: 40px;
+  top: 30px;
+`;
+
 function App() {
+  const [mode, setMode] = useState(lightTheme);
   return (
     <>
-      <GlobalStyled />
-      <Router />
-      <ReactQueryDevtools initialIsOpen={true} />
+      <ThemeProvider theme={mode}>
+        <ModeBtn
+          onClick={() => {
+            setMode(mode === lightTheme ? darkTheme : lightTheme);
+          }}
+        />
+        <GlobalStyled />
+        <Router />
+        <ReactQueryDevtools initialIsOpen={true} />
+      </ThemeProvider>
     </>
   );
 }

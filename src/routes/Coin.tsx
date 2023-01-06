@@ -1,6 +1,16 @@
 import { useQuery } from "react-query";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import React from "react";
-import { Link, Params, PathMatch, Route, Routes, useLocation, useMatch, useParams } from "react-router-dom";
+import {
+  Link,
+  Params,
+  PathMatch,
+  Route,
+  Routes,
+  useLocation,
+  useMatch,
+  useParams,
+} from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "./api";
 import Chart from "./Chart";
@@ -12,15 +22,35 @@ const Container = styled.div`
   margin: 0 auto;
 `;
 
+const HomeBtn = styled(Link)`
+  background-image: url("./imgs/house.png");
+  background-size: cover;
+  display: flex;
+  float: left;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  justify-content: center;
+  position: absolute;
+  top: 80px;
+  right: 40px;
+`;
+
 const Header = styled.header`
   height: 10vh;
-  display: flex;
+  line-height: 10vh;
+  display: inline-block;
+  margin: 20px 0px;
+  width: 100%;
   justify-content: center;
-  align-items: center;
 `;
 
 const Title = styled.h1`
   font-size: 50px;
+  justify-content: center;
+  display: flex;
+  font-weight: 700;
+  text-align: center;
   color: ${(props) => props.theme.accentColor};
 `;
 
@@ -33,9 +63,12 @@ const Loader = styled.div`
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: rgba(0, 0, 0.5);
+  background-color: ${(props) => props.theme.boxColor};
   padding: 10px 20px;
   border-radius: 10px;
+  margin: 20px 0px;
+  box-shadow: 1.4px 3.7px 5.3px rgba(0, 0, 0, 0.053), 4.7px 12.5px 17.9px rgba(0, 0, 0, 0.077),
+    21px 56px 80px rgba(0, 0, 0, 0.13);
 `;
 
 const OverviewItem = styled.div`
@@ -50,9 +83,9 @@ const OverviewItem = styled.div`
   }
 `;
 
-const Description = styled.p`
-  margin: 20px 0px;
-`;
+// const Description = styled.p`
+//   margin: 20px 0px;
+// `;
 
 const Tabs = styled.div`
   display: grid;
@@ -65,11 +98,11 @@ const Tab = styled.span<{ isActive: boolean }>`
   text-align: center;
   text-transform: uppercase;
   font-size: 12px;
-  font-weight: 400;
-  background-color: rgba(0, 0, 0.5);
+  font-weight: 700;
+  background-color: ${(props) => props.theme.boxColor};
   padding: 7px 0px;
   border-radius: 10px;
-  /* color: ${(props) => props.theme.accentColor}; */
+  color: ${(props) => props.theme.accentColor};
   color: ${(props) => (props.isActive ? props.theme.accentColor : props.theme.textColor)};
   a {
     display: block;
@@ -147,14 +180,28 @@ function Coin() {
   const priceMatch: PathMatch<"coinId"> | null = useMatch("/:coinId/price");
 
   // 모든 query는 각각의 고유한 id를 갖고 있어야 함
-  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(`${coinId}`)); // 매개변수가 필요한 경우 화살표함수 사용
-  const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(["tickers", coinId], () => fetchCoinTickers(`${coinId}`));
+  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(["info", coinId], () =>
+    fetchCoinInfo(`${coinId}`)
+  ); // 매개변수가 필요한 경우 화살표함수 사용
+  const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
+    ["tickers", coinId],
+    () => fetchCoinTickers(`${coinId}`),
+    {
+      refetchInterval: 5000,
+    }
+  );
   const loading = infoLoading || tickersLoading; // loading의 종류가 여러개인 경우
 
   return (
     <Container>
+      <HelmetProvider>
+        <Helmet>
+          <title>{state?.name ? state.name : infoLoading ? "Loading.." : infoData?.name}</title>
+        </Helmet>
+      </HelmetProvider>
       <Header>
         {/* mainpage를 거치지 않고 바로 코인페이지로 들어오는 경우 infoData.name 출력 */}
+        <HomeBtn to="/" />
         <Title>{state?.name ? state.name : infoLoading ? "Loading.." : infoData?.name}</Title>
       </Header>
       {loading ? (
@@ -171,11 +218,11 @@ function Coin() {
               <span>{infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>OPEN SOURCE:</span>
-              <span>{infoData?.open_source ? "Yes" : ""}</span>
+              <span>Price:</span>
+              <span>${tickersData?.quotes.USD.price.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
-          <Description>{infoData?.description}</Description>
+          <Overview>{infoData?.description}</Overview>
           <Overview>
             <OverviewItem>
               <span>Total Suply:</span>
@@ -195,7 +242,7 @@ function Coin() {
             </Tab>
           </Tabs>
           <Routes>
-            <Route path="price" element={<Price />} />
+            <Route path="price" element={<Price coinId={coinId!} tickersData={tickersData} />} />
             <Route path="chart" element={<Chart coinId={coinId!} />} />
           </Routes>
         </>

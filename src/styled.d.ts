@@ -7,5 +7,9 @@ declare module "styled-components" {
     bgColor: string;
     textColor: string;
     accentColor: string;
+    hover: string;
+    boxColor: string;
+    listBoxColor: string;
+    priceTextColor: string;
   }
 }
