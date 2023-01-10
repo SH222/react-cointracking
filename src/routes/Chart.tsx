@@ -22,6 +22,8 @@ interface ChartProps {
 
 const isDark = useRecoilValue(isDarkAtom);
 
+console.log(isDark);
+
 function Chart({ coinId }: ChartProps) {
   const { isLoading, data } = useQuery<IHistorical[]>(
     ["ohlcv", coinId],
