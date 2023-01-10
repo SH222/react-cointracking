@@ -67,7 +67,7 @@ const GlobalStyled = createGlobalStyle`
 `;
 
 const isDark = useRecoilValue(isDarkAtom);
-
+console.log("git commit");
 console.log(isDark);
 
 function App() {
