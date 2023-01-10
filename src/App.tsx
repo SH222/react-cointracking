@@ -4,6 +4,8 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import Router from "./Router";
 import styled from "styled-components";
 import { darkTheme, lightTheme } from "./routes/theme";
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "./atoms";
 
 const GlobalStyled = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400&display=swap');
@@ -64,29 +66,14 @@ const GlobalStyled = createGlobalStyle`
   }
 `;
 
-const ModeBtn = styled.button`
-  width: 30px;
-  height: 30px;
-  background-image: url("./imgs/light.png");
-  background-size: cover;
-  border: none;
-  background-color: transparent;
-  position: fixed;
-  z-index: 1;
-  right: 40px;
-  top: 30px;
-`;
+const isDark = useRecoilValue(isDarkAtom);
+
+console.log(isDark);
 
 function App() {
-  const [mode, setMode] = useState(lightTheme);
   return (
     <>
-      <ThemeProvider theme={mode}>
-        <ModeBtn
-          onClick={() => {
-            setMode(mode === lightTheme ? darkTheme : lightTheme);
-          }}
-        />
+      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
         <GlobalStyled />
         <Router />
         <ReactQueryDevtools initialIsOpen={true} />

@@ -86,7 +86,23 @@ interface ICoin {
   type: string;
 }
 
-function Coins() {
+const ModeBtn = styled.button`
+  width: 30px;
+  height: 30px;
+  background-image: url("./imgs/light.png");
+  background-size: cover;
+  border: none;
+  /* background-color: red; */
+  /* background-color: transparent; */
+  /* position: fixed;
+  z-index: 1;
+  right: 40px;
+  top: 30px; */
+`;
+
+interface ICoinsProps {}
+
+function Coins({}: ICoinsProps) {
   const { isLoading, data } = useQuery<ICoin[]>(["allCoins"], fetchCoins);
   return (
     <Body>
@@ -99,6 +115,7 @@ function Coins() {
         <Header>
           {/* <img src="/imgs/coins.jpg"></img> */}
           <Title>COINS</Title>
+          {/* <ModeBtn onClick={toggleDark} /> */}
         </Header>
         {/* 삼항연산자 이용해서 loading 상태 처리 */}
         {isLoading === true ? (
