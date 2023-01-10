@@ -1,6 +1,6 @@
 # react-cointracking website
 
-<center><img width="40%" src="public\imgs\play.gif"></center>
+<p align="center"><img width="50%" src="public\imgs\play.gif"></p>
 
 <br/>
 
